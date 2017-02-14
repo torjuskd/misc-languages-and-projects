@@ -1,0 +1,8 @@
+#lang racket
+(define (incList L)
+ (if(null? L) null
+    (cons(+ 1 (car L))
+(incList (cdr L)))))
+
+(incList '(2 3 4 5))
+(incList '())

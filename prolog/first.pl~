@@ -1,0 +1,18 @@
+female(mia).
+female(sally).
+male(john).
+male(jack).
+parent(mia, sally).
+parent(john, sally).
+parent(jack, john).
+father(X, Y) :- male(X), parent(X, Y).
+mother(X, Y) :- female(X), parent(X, Y).
+grandfather(X, Y) :- father(X, Z), parent(Z, Y).
+grandmother(X, Y) :- mother(X, Z), parent(Z, Y).
+
+
+grandfather(X, Y).
+
+
+
+

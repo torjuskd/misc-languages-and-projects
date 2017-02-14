@@ -1,0 +1,9 @@
+#lang racket
+(define (square a)
+  (* a a)
+  )
+(define (quadratic_solution a b c)
+  (define discriminant (- (square b) (*(* a c ) 4)))
+  (if (< discriminant 0) "No real solution"
+       (list(/ (- (sqrt discriminant) b) (* 2 a)) 
+          (/ (- (- 0 (sqrt discriminant)) b) (* 2 a))) ))

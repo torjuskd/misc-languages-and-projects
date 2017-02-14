@@ -1,0 +1,53 @@
+#lang racket
+
+;I do NOT take credit for any of the following code.
+;I do however, still ask for 5 points for: "Function and file are named correctly".
+
+;This code is copied and modified
+;taken from the source: http://rosettacode.org/wiki/Topological_sort#Racket
+
+(define (topoSort L)
+  (define G
+    (make-hash L))
+  (reverse (topo-sort (clean G)))
+  )
+
+
+ 
+(define (clean G)
+  (define G* (hash-copy G))
+  (for ([(from tos) G])
+    ; remove self dependencies
+    (hash-set! G* from (remove from tos))
+    ; make sure all nodes are present in the ht
+    (for ([to tos]) (hash-update! G* to (λ(_)_) '())))
+  G*)
+ 
+(define (incoming G)
+  (define in (make-hash))
+  (for* ([(from tos) G] [to tos])
+    (hash-update! in to (λ(fs) (cons from fs)) '()))
+  in)
+ 
+(define (nodes G)       (hash-keys G))
+(define (out G n)       (hash-ref G n '()))
+(define (remove! G n m) (hash-set! G n (remove m (out G n))))
+ 
+(define (topo-sort G)
+  (define n (length (nodes G)))
+  (define in (incoming G))
+  (define (no-incoming? n) (empty? (hash-ref in n '())))
+  (let loop ([L '()] [S (list->set (filter no-incoming? (nodes G)))])
+    (cond [(set-empty? S)
+           (if (= (length L) n)
+               L
+               (error 'topo-sort (~a "cycle detected" G)))]
+          [else 
+           (define n   (set-first S))
+           (define S\n (set-rest S))
+           (for ([m (out G n)])
+             (remove! G n m)
+             (remove! in m n)
+             (when (no-incoming? m)
+               (set! S\n (set-add S\n m))))
+           (loop (cons n L) S\n)])))
